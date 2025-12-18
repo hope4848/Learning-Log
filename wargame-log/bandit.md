@@ -184,3 +184,20 @@ Notes:
 - 🤖 find 명령어는 탐색 범위가 넓을수록 권한 오류가 빈번하므로, 2>/dev/null을 함께 사용하는 것이 실전에서 유용하다.
 
 _Date 2025-12-18_
+
+## Bandit Level 7 -> 8
+Goal:The password for the next level is stored in the file data.txt next to the word millionth
+
+Command:
+```bash
+$ ls
+data.txt
+$ cat data.txt
+So many letters......................... #Hollllllllllllllllly My computer almost shut down
+$ cat data.txt | grep 'millionth'
+millionth      password #XD
+```
+
+Notes:
+
+

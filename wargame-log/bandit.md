@@ -198,6 +198,160 @@ $ cat data.txt | grep 'millionth'
 millionth      password #XD
 ```
 
+## Bandit Level 8 -> 9
+Goal:The password for the next level is stored in the file data.txt and is the only line of text that occurs only once
+
+Command:
+```bash
+$ ls
+data.txt
+$ cat data.txt
+so many letters...
+$ sort data.txt
+#After sorting the file, each line appears ten times, except for one unique line
+#So I need to find the line that appears only once
+$ sort data.txt | uniq -u
+password #EUREKA XD
+```
+
 Notes:
+- ⚠️ uniq도 많은 옵션이 있음 -u(한 줄) -d(2번 이상 나온 줄) -c(등장 횟수 세기) -i(대소문자 무시), 등
+- 🤖 uniq -u는 인접한 중복만 비교하므로, 정확한 결과를 위해 sort와 함께 사용하는 것이 필수다.
 
+## Bandit level 9 -> 10
+Goal:The password for the next level is stored in the file data.txt in one of the few human-readable strings, preceded by several ‘=’ characters.
 
+Command:
+```bash
+$ ls
+data.txt
+$ cat data.txt
+?????????????????? #I couldn't read
+$ strings data. txt | grep '='
+FB`=
+c\5D=
+========== the
+?/=l
+=Uc1
+=vG*2P
+========== password
+k=ezG
+E========== is
+=%r_
+.?=Dm
+O&A=n
+5========== ***********************
+=*^Y
+=L3jT
+q<=,
+'QHE=
++=NBf
+#XD
+```
+
+## Bandit Level 10 -> 11
+Goal:The password for the next level is stored in the file data.txt, which contains base64 encoded data
+
+Command:
+```bash
+$ ls
+data.txt
+$ cat data.txt
+VGhlIHBhc3N3b3JkIGlzIGR0UjE3M2ZaS2IwUlJzREZTR3NnMlJXbnBOVmozcVJyCg== #I should try to decode it.
+$ base64 -d data.txt
+The password is *********** #XD
+```
+
+Notes:
+ - ⚠️ 만약 base64라는게 주어지지 않아도 base64로 인코딩 되어 있는 걸 어떻게 알 수 있을까?
+ - 🤖 base64는 쓸 수 있는 문자셋이 제한됨(A-Z, a-z, 0-9 + /) 그리고 패딩으로 = 또는 == 즉 특수문자가 섞이면 base64 아님
+ - 🤖 또한 base64 문자열 길이는 항상 4의 배수, 끝에 = 또는 ==로 길이 맞춤
+
+## Bandit Level 11 -> 12
+Goal:The password for the next level is stored in the file data.txt, where all lowercase (a-z) and uppercase (A-Z) letters have been rotated by 13 positions
+
+Command:
+```bash
+$ ls
+data.txt
+$ cat data.txt
+Gur cnffjbeq vf 7k16JArUVv5LxVuJfsSVdbbtaHGlw9D4 # I should try to translate it.
+$ cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+The password is ****************** #Goooooooooood
+```
+
+Notes:
+ - ⚠️ 인코딩 방식이 매우 다양하다는 걸 체감했다. 이후 암호나 인코딩을 마주쳤을 때 정확히 구분하려면 개념 정리가 필수!!!
+ - 🤖 인코딩은 base64 계열, 문자 치환 계열, 문자 체계, 압축+인코딩, CTF용 변형 등으로 나뉘며, 유형별로 접근해야 한다.
+
+## Bandit Level 12 -> 13
+Goal: The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been repeatedly compressed. For this level it may be useful to create a directory under /tmp in which you can work.
+
+Command:
+```bash
+$ ls
+data.txt
+$ cat data.txt
+00000000: 1f8b 0808 2817 ee68 0203 6461 7461 322e 
+...etc # # I looked up hexdump and compression formats (gzip, bzip2, tar, xxd).
+$ cd /tmp/hope
+$ cp ~/data.txt .
+$ xxd -r data.txt data
+$ ls
+data data.txt
+$ file data
+data: gzip compressed data, was "data2.bin", last modified: Tue Oct 14 09:26:00 2025, max compression, from Unix, original size modulo 2^32 572 # I got it!
+$ mv data data.gz # To use gzip, I renamed the file
+$ gunzip data.gz
+$ ls
+data data.txt
+$ file data
+data: bzip2 compressed data, block size = 900k # I got it!
+$ mv data data.bz2 # To use bunzip2, I renamed the file
+$ bunzip2 data.bz2
+$ ls
+data data.txt
+$ file data
+data: gzip compressed data, was "data4.bin", last modified: Tue Oct 14 09:26:00 2025, max compression, from Unix, original size modulo 2^32 20480
+$ mv data data.gz
+$ gunzip data.gz
+$ ls
+data data.txt
+$ file data
+data: POSIX tar archive (GNU)
+$ tar -xf data
+$ ls
+data data5.bin data.txt
+$ file data5.bin
+data5.bin: POSIX tar archive (GNU)
+$ tar -xf data5.bin
+$ ls
+data data5.bin data6.bin data.txt
+$ file data6.bin
+data6.bin: bzip2 compressed data, block size = 900k
+$ mv data6.bin data6.bz2
+$ bunzip2 data6.bz2
+$ ls
+data data5.bin data6 data.txt
+$ file data6
+data6: POSIX tar archive (GNU)
+$ tar -xf data6
+$ ls
+data  data5.bin  data6  data8.bin  data.txt
+$ file data8.bin
+data8.bin: gzip compressed data, was "data9.bin", last modified: Tue Oct 14 09:26:00 2025, max compression, from Unix, original size modulo 2^32 49
+$ mv data8.bin data8.gz
+$ gunzip data8.gz
+$ ls
+data  data5.bin  data6  data8  data.txt
+$ file data8
+data8: ASCII text # YES!!! EUREKA!!!
+$ cat data8
+The password is ******************* 
+```
+
+Notes:
+ - ⚠️ 솔직히 이정도면 실제에선 난이도 매우 쉬움이겠지? 나중에 이것 보다 훨씬 더 복잡한 파일을 다루게 되겠지?
+ - 🤖 실무 기준에선 입문 난이도지만, 파일 정체를 판별하고 단계별로 검증하는 지금의 접근 방식은 이후 훨씬 복잡한 파일 분석에서도 그대로 쓰이는 핵심 루틴임
+
+_Date 2025-12-19_

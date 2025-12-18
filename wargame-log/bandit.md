@@ -22,7 +22,7 @@ $ ls
 $ cat -
 # No response OMG
 $ cat ./-
-password XD
+password #XD
 ```
 Notes:
 - ⚠️ 리눅스에서 Ctrl + D를 누르면 터미널에서 입력이 종료되어 무반응 상태에서 나올 수 있음
@@ -47,7 +47,7 @@ cat: unrecognized option '--spaces in this filename--'
 Try 'cat --help' for more information. #?
 #After studying "cat"
 $ cat -- "--spaces in this filename--"
-password XD
+password #XD
 ```
 Notes:
 - ⚠️ cat은 다양한 옵션을 지원한다. 또한 공백이 포함된 파일 이름을 제대로 처리하려면, 파일 이름을 따옴표로 감싸주거나 --를 사용하여 옵션을 무시하고 처리해야 한다.
@@ -63,7 +63,7 @@ $ ls
 inhere
 $ cd inhere
 $ ls
-#no response
+#(no output)
 $ ls -all
 total 12
 drwxr-xr-x 2 root    root    4096 Oct 14 09:26 .
@@ -71,7 +71,7 @@ drwxr-xr-x 3 root    root    4096 Oct 14 09:26 ..
 -rw-r----- 1 bandit4 bandit3   33 Oct 14 09:26 ...Hiding-From-You
 #EUREKA
 $ cat ./...Hiding-From-You
-password XD
+password #XD
 ```
 Notes:
 - ⚠️ 리눅스는 파일을 숨길 수도 있구나. 근데 그 숨긴 파일을 명령어로 찾을 수도 있구나!
@@ -103,7 +103,7 @@ $ file ./*
 ./-file09: data
 #EUREKA
 $ cat ./-file07
-password XD
+password #XD
 ```
 Notes:
 - ⚠️ ASCII text가 뭐지? 왜 이것만 인간이 읽을 수 있지?
@@ -112,3 +112,75 @@ Notes:
 - 🤖 사람이 읽을 수 있는 파일 : 텍스트 파일(.txt .csv .log), 마크업 언어 파일(.html .xml), 스크립트 파일(.sh .py), 소스 코드 파일(.c .java .js) 등
   
 _Date 2025-12-17_
+
+
+## Bandit Level 5 -> 6 
+Goal:
+The password for the next level is stored in a file somewhere under the inhere directory and has all of the following properties:
+ - human-readable
+ - 1033 bytes in size
+ - not executable
+
+Command:
+```bash
+$ cd inhere
+$ ls -al
+total 88
+drwxr-x--- 22 root bandit5 4096 Oct 14 09:26 .
+drwxr-xr-x  3 root root    4096 Oct 14 09:26 ..
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere00
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere01
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere02
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere03
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere04
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere05
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere06
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere07
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere08
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere09
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere10
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere11
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere12
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere13
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere14
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere15
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere16
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere17
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere18
+drwxr-x---  2 root bandit5 4096 Oct 14 09:26 maybehere19
+#Hmm... maybe I should use 'find'
+
+$ find . -type f -size 1033c -readable
+./maybehere07/.file2 #Got it
+$ cat ./maybere07/.file2
+password #XD
+```
+
+Notes:
+- ⚠️ Find랑 File을 구분 잘해야겠구나.
+- 🤖 find . -type f -size 1033c -readable ! -executable (조건 하나 빠짐)
+- 🤖 find [어디서] [조건(테스트)] [행동(액션)]
+- 🤖 자주 쓰는 조건 : -name(이름), -type(타입), -size(크기)
+
+## Bandit Level 6 -> 7
+Goal:The password for the next level is stored somewhere on the server and has all of the following properties:
+
+- owned by user bandit7
+- owned by group bandit6
+- 33 bytes in size
+
+Command:
+```bash
+$ find / -user bandit7 -group bandit6 -size 33c #The file could be anywhere, so I searched from root(/)
+So many numbers of paths #Hmm...!
+$ find / -user bandit7 -group bandit6 -size 33c 2>/dev/null
+/var/lib/dpkg/info/bandit7.password #EUREKA
+$ cat /var/lib/dpkg/info/bandit7.password
+password #XD
+```
+
+Notes:
+- ⚠️ Find와 같은 명령어 사용시 오류를 제외한 내용을 보고 싶을 때 2>/dev/null을 쓰면 되겠군
+- 🤖 find 명령어는 탐색 범위가 넓을수록 권한 오류가 빈번하므로, 2>/dev/null을 함께 사용하는 것이 실전에서 유용하다.
+
+_Date 2025-12-18_

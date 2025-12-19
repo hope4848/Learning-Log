@@ -355,3 +355,188 @@ Notes:
  - 🤖 실무 기준에선 입문 난이도지만, 파일 정체를 판별하고 단계별로 검증하는 지금의 접근 방식은 이후 훨씬 복잡한 파일 분석에서도 그대로 쓰이는 핵심 루틴임
 
 _Date 2025-12-19_
+
+## Bandit Level 13 -> 14
+Goal:The password for the next level is stored in /etc/bandit_pass/bandit14 and can only be read by user bandit14.
+
+Command:
+```bash
+$ ls
+sshkey.private
+$ cat sshkey.private
+-----BEGIN RSA PRIVATE KEY-----
+***************************************
+-----END RSA PRIVATE KEY-----
+# I will use this key on my local machine
+$ exit
+$ nano sshkey.private # Copy the private key from bandit13 to local
+$ chmod 600 sshkey.private # SSH requires this permission
+$ ssh -i sshkey.private bandit14@bandit.labs.overthewire.org -p 2220
+# connection sucess
+$ cat /etc/bandit_pass/bandit14
+password #XD
+```
+
+Notes:
+ - ⚠️ SSH는 개인키가 소유자만 접근 가능할 때만 신뢰하며 이를 보장하기 위해 chmod 600을 요구하는구나
+ - 🤖 이 단계의 핵심은 권한이 아닌 신뢰이며, SSH는 개인키가 오직 소유자만 접근 가능할 때만 인증 수단으로 받아들인다.
+
+## Bandit Level 14 -> 15
+Goal:The password for the next level can be retrieved by submitting the password of the current level to port 30000 on localhost.
+
+Command:
+```bash
+$ nc localhost 30000
+$ current password
+password #EASY!
+```
+
+Notes:
+ - 🤖 nc는 포트로 입력을 전달해 결과를 받는 가장 단순한 네트워크 도구다.
+
+## Bandit Level 15 -> 16
+Goal:The password for the next level can be retrieved by submitting the password of the current level to port 30001 on localhost using SSL/TLS encryption.
+
+Command:
+```bash
+$ ncat --ssl localhost 30001
+$ current password
+password #EASY!
+```
+
+Notes:
+ - 🤖 SSL/TLS가 필요한 서비스는 평문 nc가 아닌 --ssl 옵션으로 통신해야 한다.
+
+## Bandit Level 16 -> 17
+Goal:The credentials for the next level can be retrieved by submitting the password of the current level to a port on localhost in the range 31000 to 32000. First find out which of these ports have a server listening on them. Then find out which of those speak SSL/TLS and which don’t. There is only 1 server that will give the next credentials, the others will simply send back to you whatever you send to it.
+
+Command:
+```bash
+$ nmap localhost -p 31000-32000
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-12-19 02:17 UTC
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.00016s latency).
+Not shown: 996 closed tcp ports (conn-refused)
+PORT      STATE SERVICE
+31046/tcp open  unknown
+31518/tcp open  unknown
+31691/tcp open  unknown
+31790/tcp open  unknown
+31960/tcp open  unknown
+
+#Hmm... The initial scan only showed open ports without service details
+#So I used -sV to identify which services were running on each port
+
+$ nmap -sV localhost -p 31000-32000
+Nmap scan report for localhost (127.0.0.1)
+Host is up (0.00017s latency).
+Not shown: 996 closed tcp ports (conn-refused)
+PORT      STATE SERVICE     VERSION
+31046/tcp open  echo
+31518/tcp open  ssl/echo
+31691/tcp open  echo
+31790/tcp open  ssl/unknown
+31960/tcp open  echo
+
+$ ncat --ssl localhost 31518
+$ current password
+current password # Next!
+
+$ ncat --ssl localhost 31790
+$ current password
+-----BEGIN RSA PRIVATE KEY-----
+**********************************
+-----END RSA PRIVATE KEY-----
+# EUREKA
+```
+
+Notes:
+ - ⚠️ nmap으로 열린 포트를 확인하고 ncat으로 서비스를 식별하는게 이 단계의 핵심이었을까?
+ - 🤖 이 단계의 핵심은 포트 개수를 줄이는 것이 아니라, nmap으로 후보를 걸러낸 뒤 ncat으로 실제로 어떤 서비스가 응답하는지 검증하는 데 있다.
+
+## Bandit Level 17 -> 18
+Goal:There are 2 files in the homedirectory: passwords.old and passwords.new. The password for the next level is in passwords.new and is the only line that has been changed between passwords.old and passwords.new
+
+Command:
+```bash
+$ ls
+passwords.new  passwords.old
+$ diff passwords.new passwords.old
+< password
+---
+> different letters
+# I got it!
+```
+
+Notes:
+ - ⚠️ 문서를 비교할 땐 diff 명령어를 쓰면 좋겠군
+ - 🤖 diff 옵션에는 -u(유니파이드 포맷, 가독성 최고), -y(좌우 나란히 비교) -q(다른지만 알려줌, 내용 안보여줌)이 있다
+ - 🤖 -b(연속된 공백 무시), -w(모든 공백 무시), -i(대소문자 무시)
+
+## Bandit Level 18 -> 19
+Goal:The password for the next level is stored in a file readme in the homedirectory. Unfortunately, someone has modified .bashrc to log you out when you log in with SSH.
+
+Command:
+```bash
+$ ssh bandit18@bandit.labs.overthewire.org -p 2220
+$ password
+Byebye !
+
+#Hmm.. the session exits immediately, so the command must be executed during SSH login
+
+$ ssh bandit18@bandit.labs.overthewire.org -p 2220 cat readme
+password #XD
+```
+
+Notes:
+ - ⚠️.bashrc는 로그인 시 자동 실행되며, 세션을 강제로 종료할 수 있음
+ - 🤖 SSH는 원격 명령을 인자로 전달하면 비대화식(non-interactive) 실행이 가능
+ - ⚠️ ssh bandit18@bandit.labs.overthewire.org -p 2220 | cat readme 이건 왜 안될까?
+ - 🤖 | cat readme는 로컬에서 실행되고, ssh는 원격에서 실행됨.
+ - 🤖 즉 [원격 SSH 로그인 결과(stdout)] ──▶ [로컬 cat readme]
+ - 🤖 파이프(|)의 본질은 항상 '앞 명령의 출력' -> '뒤 명령의 표준입력' 임!
+
+## Bandit Level 19 -> 20
+Goal:To gain access to the next level, you should use the setuid binary in the homedirectory. Execute it without arguments to find out how to use it. The password for this level can be found in the usual place (/etc/bandit_pass), after you have used the setuid binary.
+
+Command:
+```bash
+$ ls
+bandit20-do
+$ ./bandit20-do 
+Run a command as another user.
+  Example: ./bandit20-do whoami
+$ whoami
+bandit19
+$ ./bandit20-do whoami
+bandit20 # I got it!
+$ ./bandit20-do cat /etc/bandit_pass/bandit20
+password #XD
+```
+
+Notes:
+ - ⚠️ setuid 바이너리는 실행한 사용자가 아니라 파일 소유자의 권한으로 명령을 실행한다는 점이 이 단계의 핵심인듯
+ - 🤖 setuid 바이너리는 실행한 사용자가 아니라 파일 소유자의 권한으로 명령을 수행하게 만드는 메커니즘이다.
+
+## Bandit Level 20 -> 21
+Goal:There is a setuid binary in the homedirectory that does the following: it makes a connection to localhost on the port you specify as a commandline argument. It then reads a line of text from the connection and compares it to the password in the previous level (bandit20). If the password is correct, it will transmit the password for the next level (bandit21).
+
+Command:
+```bash
+# I opened another cloud shell tab
+$1 nc -l 3333
+$2 ./suconnect 3333
+$1 current password
+$1 password
+$2 Read : currentpassword
+Password matches, sending next password #Goood
+```
+
+Notes:
+ - ⚠️ 이 단계는 setuid 바이너리가 네트워크로 받은 입력을 검증한 뒤 조건이 맞으면 정보를 주는 것이 핵심인듯
+ - 🤖 이 단계는 setuid 권한과 로컬 네트워크 통신이 결합되면 입력 하나로도 권한 경계가 넘어갈 수 있음을 보여준다.
+
+_Date 2025-12-19_ #20단계까지 CLEAR! 하지만 갈 길이 멀다!!!
+
+  
+

@@ -24,4 +24,10 @@ How to choose an AWS Region?
  - Users or Groups can be assigned JSON documents called policies
  - These policies define the permissions of the users
  - In AWS you apply the least privilege principle : don't give more permissions than a user needs
- - 
+
+   
+ ## IAM
+  - IAM 역할의 올바른 정의: AWS 서비스에 요청을 생성하기 위한 일련의 권한을 정의하고, AWS 서비스에 의해 사용될 IAM개체
+  - IAM 보안 도구에 해당되는 것은? : IAM 자격 증명 보고서
+  - IAM 정책이란? : AWS 서비스에 요청을 생성하기 위한 일련의 권한을 정의하며, IAM 사용자, 사용자 그룹 및 IAM 역할에서 사용하게 될 JSON문서
+    

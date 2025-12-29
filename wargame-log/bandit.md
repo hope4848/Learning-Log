@@ -792,3 +792,94 @@ Notes:
  - 🤖 제한 셸 구조와 pager·vim 우회 흐름은 잘 해결했으니, 다음엔 stty 옵션과 vim의 외부 명령 실행 메커니즘을 명확히 이해해 “왜 동작하는지”까지 개념적으로 확인할 것.
 
 _Date 2025-12-29_
+
+## Bandit Level 26 -> 27
+Goal:Good job getting a shell! Now hurry and grab the password for bandit27!
+
+Command:
+```bash
+bandit26@bandit:~$ ls
+$ bandit27-do text.txt
+$ ./bandit27-do cat /etc/bandit_pass/bandit27
+password #XD
+```
+
+Notes:
+ -⚠️ Hurry up!
+
+## Bandit Level 27 -> 28
+Goal:There is a git repository at ssh://bandit27-git@bandit.labs.overthewire.org/home/bandit27-git/repo via the port 2220. The password for the user bandit27-git is the same as for the user bandit27.
+
+Clone the repository and find the password for the next level.
+
+Command:
+```bash
+$ git clone ssh://bandit27-git@bandit.labs.overthewire.org:2220/home/bandit27-git/repo
+$ ls
+repo
+$ cd repo
+$ ls
+README
+$ cat README
+The password to the next level is: ****************** #XD
+```
+
+Notes:
+ -⚠️ SSH기반 git repo에 접근할 때는 포트와 인증을 정확히 지정해야만 원격 저장소를 정상적으로 클론할 수 있음을 보여준다
+ -🤖 SSH 포트 설정과 인증 흐름을 이해해야 민감한 정보(패스워드)를 안전하게 저장소에서 가져올 수 있다는 구조를 잘 보여준다.
+
+## Bandit Level 28 -> 29
+Goal:There is a git repository at ssh://bandit28-git@bandit.labs.overthewire.org/home/bandit28-git/repo via the port 2220. The password for the user bandit28-git is the same as for the user bandit28.
+
+Clone the repository and find the password for the next level.
+
+Command:
+```bash
+$ git clone ssh://bandit28-git@bandit.labs.overthewire.org:2220/home/bandit28-git/repo
+$ cd repo
+$ ls
+README.md
+$ cat README.md
+# Bandit Notes
+Some notes for level29 of bandit.
+
+## credentials
+
+- username: bandit29
+- password: xxxxxxxxxx
+
+$ git log
+commit b5ed4b5a3499533c2611217c8780e8ead48609f6 (HEAD -> master, origin/master, origin/HEAD)
+Author: Morla Porla <morla@overthewire.org>
+Date:   Tue Oct 14 09:26:24 2025 +0000
+
+    fix info leak
+
+commit 8b7c651b37ce7a94633b7b7b7c980ded19a16e4f
+Author: Morla Porla <morla@overthewire.org>
+Date:   Tue Oct 14 09:26:24 2025 +0000
+
+    add missing data
+
+commit 6d8e5e607602b597ade7504a550a29ba03f2cca0
+Author: Ben Dover <noone@overthewire.org>
+Date:   Tue Oct 14 09:26:24 2025 +0000
+
+    initial commit of README.md
+# Second one involve missing data!
+$ git checkout 8b7c651b37ce7a94633b7b7b7c980ded19a16e4f
+$ ls
+README.md
+$ cat README.md
+# Bandit Notes
+Some notes for level29 of bandit.
+
+## credentials
+
+- username: bandit29
+- password: ********************** #XD
+```
+
+Notes:
+ -⚠️
+

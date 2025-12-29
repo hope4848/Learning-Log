@@ -764,23 +764,23 @@ $ cat bandit26.sshkey
 -----BEGIN RSA PRIVATE KEY-----
 ************************
 -----END RSA PRIVATE KEY----- 
-#I went to the local machine and copied the private key for bandit26.
+# I copied the bandit26 private key to my local machine
 $ chmod 600 bandit26
 $ ssh -i bandit26 bandit26@bandit.labs.overthewire.org -p 2220
 Connection to bandit.labs.overthewire.org closed.
-#Hmm...? back to the bandit25
+# Hmm...? I was kicked back to bandit25
 $ cat /etc/passwd | grep bandit26
 bandit26:x:11026:11026:bandit level 26:/home/bandit26:/usr/bin/showtext
 #I checked /etc/passwd and found that bandit26 doesn’t use /bin/bash but runs /usr/bin/showtext instead.
 #Since showtext uses a pager like more/less, I forced it to open the pager and then escaped to a shell from there.
-# Go to the local
+# Back to the local machine
 $ stty size 
 49 113
 $ stty rows 5 cols 20
 $ ssh -i bandit26 bandit26@bandit.labs.overthewire.org -p 2220
-#bandit26's information and 
+# bandit26's information was displayed,
 --More--(24$) # I got it!
-# I pushed the 'v' botton'
+# I pressed the 'v' key
 $ :set shell=/bin/bash
 $ :shell
 bandit26@bandit:~$ cat /etc/bandit_pass/bandit26

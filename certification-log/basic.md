@@ -167,3 +167,28 @@
     - DNS(Domain Name System) : UDP / 53
     - DHCP(Dynamic Host Configuration Protocl) : UDP / 67, 68
     - VoIP(Vocie over IP) : UDP / 5060
+
+## Session Layer
+ - 통신 주체끼리 연결이 유지할 수 있는 방법을 정의
+ - 예전의 컴퓨팅 환경에서 Layer 1, 2, 3, 4 이외의 차원에서 지속적인 연결(세션)이 수립될 수 있는 방법을 제공
+    - ex) MAC ADdress(2)와 IP(3)주소와 포트(4)가 동일한 상황에서 어떻게 유저를 구분할 것 인가?
+ - 현대에서도 마찬가지로 Layer 4 이상의 추가적인 차원에서 지속적인 연결(세션)을 수립할 수 있는 방법을 포함
+    - ex) HTTP Cookie
+ - 몇 몇 프로토콜의 경우 Session Layer 자체를 구현하지 않음 ex) FTP
+
+## Presentation Layer
+ - 받은 데이터를 해석하는 방법을 정의
+    - 파싱, 압축 해제, 복호화 등 Application Layer에서 사용할 수 있는 형식으로 변환을 담당
+
+## Application Layer
+ - 실제 받은 데이터를 처리하는 방법을 정의
+    - 말 그대로 데이터를 가지고 무엇을 어떻게 처리할지에 관한 레이어
+ - ex)HTTP의 경우
+   - Method(Get/Post/Put/Delete/Head/Option/Patch)
+   - Status Code(2xx, 3xx, 4xx, 5xx)
+   - Header
+     - Host
+     - User-Agent
+     - Authorizations
+     - Accept--Encoding
+     - Content-Type

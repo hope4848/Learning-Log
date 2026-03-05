@@ -58,7 +58,7 @@ boolean(1 byte)
 - 한 번 값이 할당 => 재할당이 불가능 <-> 변수
 - 전체를 대문자로 표시, 단어간 구분은 _ 로 표시
 - ex)
-  - final doulbe PI = 3.14;
+  - final double PI = 3.14;
   - System.out.println(PI);
   - PI = 3.141592; <<< 오류 남
 

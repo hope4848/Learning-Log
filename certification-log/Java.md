@@ -25,7 +25,7 @@ LTS(Long-Term Supoort)
 6. 자바 예약어 사용 불가
 
 ## 정수형 
-1. byte(1 byte = 8 btis) : -2^7 ~ 2^7-1 (-128 ~ 127)
+1. byte(1 byte = 8 bits) : -2^7 ~ 2^7-1 (-128 ~ 127)
 2. short(2 bytes = 16 bits) : -2^15 ~ 2^15-1(-32,768 ~ 32,767)
 3. int(4 bytes) : -2^31 ~ 2^31-1
 4. long(8 bytes) : -2^63 ~ 2^63-1

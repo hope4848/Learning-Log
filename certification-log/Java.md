@@ -41,7 +41,7 @@ LTS(Long-Term Supoort)
 - Reference Type (참조형) : 객체의 주소값 저장 ex) String, Array, Object, Class
 - 특징 : 객체는 Heap 메모리에 저장, 변수는 Heap의 주소 참조
 
-## 5. Java MEmory Structure
+## 5. Java Memory Structure
 - Stack : 지역변수, 기본형 값, 참조 주소 저장
 - Heap : 객체, String 객체, 배열 저장
 

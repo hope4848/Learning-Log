@@ -4,17 +4,159 @@ LTS(Long-Term Supoort)
 
 안정적인 프로그램 개발을 위해 사용 권장
 
+## Java 필수 개념 정리!
+## 1. Java OS Independence
+   - Java는 운영체제와 독립적으로 실행된다.
+   - 이유 : Java 코드는 컴파일되면 Bytecode (.class)로 변환된다.
+   - 이 바이트코드는 각 운영체제의 JVM이 실행하므로 OS와 독립적으로 실행됨.
+   - Java Code (.java) -> Compiler -> Bytecode (.class) -> JVM -> Operating System
+
+## 2. JVM ⊂ JRE ⊂ JDK
+
 ## JVM - Java Virtual Machine
 - Java 프로그램이 실행되는 가상의 공간
 - 운영체제와 상관 없이 JVM이 구성되어 있다면 Java 프로그램 실행 가능
+- OS 위에서 Java 프로그램 실행
 
 ## JRE - Java Runtime Environment
 - Java로 컴파일 된 프로그램을 실행
 - 모든 Java 프로그램은 JVM에서 실행
+- JVM + Java 실행 라이브러리
 
 ## JDK - Java Development Kit
 - Java 어플리케이션 개발을 위해 반드시 필요
 - Java 컴파일러와 JRE포함
+- JRE + 개발 도구
+
+## 3. Java Compilation Process
+- .java -> javac -> .class -> JVM -> Execution
+- .java : Java Source Code
+- javac : Java Compiler
+- .class : Bytecode
+- JVM : Bytecode 실행
+
+## 4. Primitive vs Reference Type
+- Primitive Type (기본형) : 값 자체 저장 ex) int, double, char, boolean 등
+- 특징 : stack 메모리에 저장, 고정된 크기
+- Reference Type (참조형) : 객체의 주소값 저장 ex) String, Array, Object, Class
+- 특징 : 객체는 Heap 메모리에 저장, 변수는 Heap의 주소 참조
+
+## 5. Java MEmory Structure
+- Stack : 지역변수, 기본형 값, 참조 주소 저장
+- Heap : 객체, String 객체, 배열 저장
+
+## 6. String Comparison
+- == : 주소 비교
+```comand
+String a = "Hello";
+String b = "Hello";
+
+a == b
+-> 같은 String pool 주소 -> true
+```
+- equals() : 내용 비교
+```comand
+String a = new String("Hello");
+String b = new String("Hello");
+
+a.equals(b)
+-> 문자열 내용 비교 -> true
+```
+
+## 7. String Creation
+String Literal
+```command
+String a = "Hello";
+String b = "Hello";
+```
+- String Pool 사용
+- 같은 문자열이면 주소 공유
+
+String Object
+```command
+String a = new String("Hello");
+```
+- Heap에 새 객체 생성
+- String Pool과 주소 다름
+
+## 8. Type Casting
+Automatic Casting (형변환)
+- 작은 타입 -> 큰 타입
+```command
+byte -> short -> int -> long -> float -> double
+ex)
+int a = 10;
+double b = a;
+```
+
+Explicit Casting (강제 형변환)
+- 큰 타입 -> 작은 타입
+```command
+int a = 128;
+byte b = (byte) a;
+```
+- 주의 : 범위 초과 시 Overflow 발생
+
+## 9. Integer Type Range
+1. byte 1byte -2^7 ~ 2^7-1
+2. short 2bytes -2^15 ~ 2^15-1
+3. int 4bytes -2^31 ~ 2^31-1
+4. long 8bytes -2^63 ~ 2^63-1
+
+## 10. Floating Point Type
+1. float 4bytes 약 7자리
+2. double 8bytes 약 15자리
+
+## 11. Constants
+상수는 값 변경 불가능
+
+## 12. Console Input (Scanner)
+```command
+Scanner sc = new Scanner(System.in);
+
+String name = sc.nextLine();
+int age = sc.nextInt();
+
+출력
+System.out.printf("%s %d", name, age);
+```
+
+## 13. printf Format
+1. %s 문자열
+2. %d 정수
+3. $f 실수
+4. \n 줄바꿈
+5. \t 탭
+
+## 14. Java Arithmetic Promotion
+Java에서 정수 연산 결과는 최소 int
+ex)
+```comand
+short a = 10;
+short b = 20;
+
+short c = a + b; // compile error
+해결
+short c = (short)(a + b);
+```
+
+## 15. String Concatenation
++ Operator
+```comand
+String a = "Hello ";
+String b = "World";
+
+System.out.println(a + b);
+```
+String Builder
+- 문자열 변경이 많을 때 사용
+```command
+StringBuilder sb = new StringBuilder("Hello");
+
+sb.append(" World");
+
+String result = sb.toString();
+```
 
 ## 변수
 1. 1개의 변수 => 1개의 값만 할당 가능

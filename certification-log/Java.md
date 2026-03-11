@@ -474,3 +474,95 @@ do {
    b--;
 } while (b > 0); ==> 10, 9, 8... 1
 (do는 반복문과 무관하게 최초 한 번 실행하는 반복문!)  
+```
+
+## 배열(Arrays)
+```command
+int[] price = {10000, 9000, 40000, 7000};
+String[] mbti = {"ENFJ", "ENTP", "INFJ", "INTP"}  주의 동일한 타입만 가능!
+System.out.println(price[0]); => 10000
+
+price[1] = 8000; -> 9000에서 8000으로 바뀜
+System.out.println(price); -> price도 객체이므로 주소값이 나옴. price 값 안나옴!
+
+System.out.println(mbti.length); => 4
+
+for (int i = 0; i < mbti.length; i++) {
+   System.out.println(mbti[i]);
+} => ENFJ \n ENTP \n INFJ \n INTP 출력
+```
+
+## 리스트
+```command
+순서 구분, 중복 허용
+Vector, ArrayList, LinkedList 중 ArrayList 배움
+
+ArrayList list = new ArrayList(initialCapacity: 10);
+list.add(100);
+list.add("INFP");
+
+for (int i = 0; i < list.size(); i++) {
+   System.out.println(list.get(i));
+}  => 100 \n INFP 출력
+
+만약 list의 자료형의 형태 제한하고 싶으면
+ArrayList<Integer> list = new ArrayList(initialCapacity: 10); (int 쓰면 안됨 Integer)
+```
+
+## Map 
+```command
+키-값 쌍을 요소로 가지는 데이터의 모음, 순서 구분 없음
+키는 중복 불가, 값은 중복 허용
+HashMap
+
+HashMap map = new HashMap();
+map.put("age", 30);
+map.put("mbti", "INFP");
+System.out.println(map.get("age")); => 30 출력
+
+만약 map의 자료형의 형태를 제한하고 싶으면
+HashMap<STring, String> map = new HashMap();
+```
+
+## 함수(Method)
+```command
+어떠한 값이 넘겨지거나 아무 값도 넘겨지지 않았을 때
+작업을 수행한 후
+반환하거나 혹은 반환하지 않고 종료
+
+public static void main(String[] args) {
+
+
+1. 입력 o, 출력(반환) o
+static int mod (int a, int b) {
+   int result = a % b;
+   return result;
+}
+
+2. 입력 o, 출력(반환) x
+static void printNum (int a) {
+   System.out.println(a);
+}
+
+3. 입력 x, 출력(반환) o
+static String greeting() {
+   return "Hello!";
+}
+
+4. 입력 x, 출력(반환) x
+static void greeting_2() {
+   System.out.println("Hello!");
+}
+
+예시)
+   ArrayList list_1 = new ArrayList<>();
+   list_1.add(10);
+   list_1.add(100);
+   
+   printListElements(list_1);
+
+static void printListElements(ArrayList list) {
+   for (int i = 0; i < list.size(); i++) {
+      System.out.println(list.get(i));
+   }
+}

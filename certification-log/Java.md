@@ -194,75 +194,7 @@ boolean(1 byte)
 - 변수에 대입되는 값 => 힙 메모리 영역의 주소값
 - String a = new String(original:"Hello!");
 - String b = "Hello!";
-- String c = "Hello1"; 라 했을 때 a랑 b,c는 주소 다름, b랑 c는 주소 같음
-
-## 상수 (constants, final variables)
-- 한 번 값이 할당 => 재할당이 불가능 <-> 변수
-- 전체를 대문자로 표시, 단어간 구분은 _ 로 표시
-- ex)
-  - final double PI = 3.14;
-  - System.out.println(PI);
-  - PI = 3.141592; <<< 오류 남
-
-## 형변환
-- byte < short < int < long <<< float < double
-- short a = 128;
-- int b = a; <<< b의 범위가 더 크므로 가능! 근데 반대면 오류나므로 *강제 형변환 필요*
-- 강제 형변환
-```comand
-int a = 128;
-short b = (short) a;
-byte c = (byte) a;
-System.out.println(a); >>> 128
-System.out.println(b); >>> 128
-System.out.println(c); >>> -128 (범위 초과) <<< 강제 형변환할 때 범위 확인 잘해라.
-
-int m = 80;
-double n = m;
-Syste.out.println(m); >>> 80
-System.out.println(n);  >>> 80.0 (실수형)
-
-double c = 10.3;
-float d = (float) c;
-System.out.println(c); >>> 10.3
-System.out.println(d); >>> 10.3
-
-double c = 10.33124546435;
-float d = (float) c;
-System.out.println(c); >>> 10.33124546435
-System.out.println(d); >>> 10.331245 (범위 초과라 뒤에 잘림)
-
-int e = 10;
-short f = 20;
-short g = (short) (e + f); 연산을 강제 형변환 할 때 연산 식 전체에 괄호 씌우기! 
-``` 
-
-## String 
-- String => 문자열 객체
-- 객체 => 힙 메모리 영역
-- 변수 => 힙 메모리 영역의 주소
-- ex)
-```comand
-String str = "안녕하세요!"; // 문자열 리터럴
-String str_2 = new String(original:"안녕하세요!"); // 생성자
-String str_3 = "안녕하세요!";
-
-if (str == str_2) {
-  System.out.println("str == str_2");
-  }
-각각 해주면
-str_2는 str,str_3랑 다름.  str이랑 str_3는 같음 ex)
-  - boolean bool_1 = true;
-  - boolean bool_2 = false;
-  - boolean bool_3 = (100<0);
-  - but! boolean bool_4 = 1; <<< 은 true로 안나옴!
-
-## 참조형
-- 참조형 데이터의 값 => 힙 메모리 영역
-- 변수에 대입되는 값 => 힙 메모리 영역의 주소값
-- String a = new String(original:"Hello!");
-- String b = "Hello!";
-- String c = "Hello1"; 라 했을 때 a랑 b,c는 주소 다름, b랑 c는 주소 같음
+- String c = "Hello!"; 라 했을 때 a랑 b,c는 주소 다름, b랑 c는 주소 같음
 
 ## 상수 (constants, final variables)
 - 한 번 값이 할당 => 재할당이 불가능 <-> 변수
@@ -413,4 +345,132 @@ public class ConsoleI0 {
 
 
 (print 뒤에 ln 지우면 띄어쓰기 안되고 바로 그 자리에서 입력 값 받음!!! 꺽쇠 바로 옆으로 입력창 뜸)
+```
 
+## 연산자
+산술 연산자
+```command
+public class Operators {
+   public static void main(String[] args) {
+      // 산술 연산자
+      int a = 10;
+      int b = 20;
+      String c = "abc";
+      double d = 10;
+      double e = 20;
+      System.out.println(a + b); => 30
+      System.out.println(a - b); => -10
+      System.out.println(a * b); => 200
+      System.out.println(a / b); => 0 (몫만)
+      System.out.println(a % b); => 10 (나눈 나머지만)
+
+      System.out.println(d / e); => 0.5 (소수이므로)
+
+      System.out.println(a + c); => 10abc (모두 스트링으로 취급 됨)
+```
+비교 연산자
+```command
+      int a = 5;
+      int b = 8;
+      System.out.println(a > b); => false
+      System.out.println(a < b); => true
+      System.out.println(a >= b); => true
+      System.out.println(a <= b); => true
+      // = : 대입 연산자 (우측에 있는 값을 좌측에 대입한다) == : 비교 연산자
+      System.out.println(a == b); => false (!= : 같지 않다)
+```
+논리 연산자
+```command
+int a = 3;
+int b = 3;
+int c = 5;
+
+// And(&&) - 교집합
+System.out.println(c > a && c > b); => true (모두 true여야 true)
+
+// OR(||) - 합집합
+System.out.println(c > a || c > b); => true (둘 중 하나만 true여도 true)
+
+// Not(!) - 여집합
+System.out.println(!true); => false
+```
+
+대입 연산자
+```command
+int a = 1;
+double price = 12.5;
+```
+
+증감 연산자
+```command
+int a = 1;
+a++; // a = a + 1
+a--; // a = a - 1
+System.out.println(a++); => 1 (먼저 a를 출력하고 1을 더함)
+System.out.println(a); => 2
+
+++a;
+--a;
+System.outprintln(++a); => 2 (먼저 연산을 하고 출력)
+System.out.println(a); => 2
+```
+
+## 조건문
+```command
+int a = 1;
+int b = 100;
+if (a != b) {
+   System.out.println"a !=b");
+} => a !=b 출력
+
+if (a == b) {
+   System.out.println("a ==b");
+} else {
+   System.out.println("else block");
+}
+-> else block 출력
+
+if (a == b) {
+   System.out.println("a==b");
+} else if (a> b) {
+   System.out.println("a < b");
+} else {
+   System.out.println("else");
+} => a < b 출력
+다중 조건의 경우 조건을 만족하는 최초의 분기만 실행!
+한 꺼번에 두개의 조건 선택 안됨!
+
+int a = 10;
+switch (a + 1) {
+   case 9:
+      System.out.println("a + 1 == 9");
+      break;
+   case 10:
+      System.out.println("a + 1 == 10");
+      break;
+   case 11: 
+      System.out.println("a + 1 == 11");
+      break;
+   default:
+      System.out.println("default"); (아무 조건도 성립 안될 때 실행)
+} => a + 1 == 11 출력.
+주의할 점! break 안 걸면 계속 실행됨.
+```
+
+## 반복문
+```command
+for (int i = 0; i < 10; i++) {
+      System.out.println(i);
+} => 0, 1, 2 .... 9까지 출력
+초기화된 변수, 조건식, 증감식 필요함.
+
+int b = 10
+while (b > 0) {
+   System.out.println(b);
+   b--;
+} -> 10, 9 ... 1
+do {
+   System.out.println(b);
+   b--;
+} while (b > 0); ==> 10, 9, 8... 1
+(do는 반복문과 무관하게 최초 한 번 실행하는 반복문!)  

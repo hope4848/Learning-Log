@@ -1,0 +1,14 @@
+# 컴파일된 클래스 파일 (보안 및 용량상 제외)
+/bin/
+*.class
+
+# 이클립스 설정 파일 (개인 환경 설정이므로 제외)
+.settings/
+.project
+.classpath
+
+# 맥북 시스템 파일
+.DS_Store
+
+# (선택) 만약 나중에 DB 비번 등을 담은 설정파일을 만든다면 추가
+# config.properties
